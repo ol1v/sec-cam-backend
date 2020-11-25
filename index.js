@@ -5,10 +5,38 @@ const bodyParser = require('body-parser')
 
 const app = express()
 
+
+app.use(fileUpload({
+    createParentPath: true
+}))
+
 app.use(cors())
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8000
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })
+
+
+app.post('/upload-video', async (req, res) => {
+    try {
+        if (!req.files) {
+            res.send({
+                message: 'No file has been uploaded'
+            })
+        } else {
+            // give unique filename later
+            let video = req.files.video
+
+            video.mv('./uploads/' + video.name)
+
+            res.send({
+                message: 'File successfully uploaded'
+            })
+        }
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+)
