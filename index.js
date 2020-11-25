@@ -10,9 +10,12 @@ app.use(fileUpload({
     createParentPath: true
 }))
 
+// set limit of filesize
+const SIZE_LIMIT = '1gb'
+
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: SIZE_LIMIT }));
 
 const port = process.env.PORT || 8000
 
@@ -22,7 +25,7 @@ app.listen(port, () => {
 
 
 app.post('/upload-video', async (req, res) => {
-    console.log('this is the requestbody' + req.body.name) // works
+    console.log('this is the requestbody' + req.files) // works
     try {
         if (!req.body.name) {
             res.send({
@@ -30,10 +33,12 @@ app.post('/upload-video', async (req, res) => {
             })
         } else {
             // give unique filename later
-            let video = req.body.files.blob
+            let video = req.files
 
-            video.mv('./uploadedfiles/' + video.name)
-            console.log('Uploaded video: ' + video.name)
+            console.log('req.files reaches server')
+
+            // video.mv('./uploadedfiles/' + 'video')
+            // console.log('Uploaded video: ' + 'video')
 
             res.send({
                 message: 'File successfully uploaded'
