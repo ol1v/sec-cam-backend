@@ -10,7 +10,9 @@ app.use(fileUpload({
     createParentPath: true
 }))
 
-app.use(cors())
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const port = process.env.PORT || 8000
 
@@ -20,16 +22,18 @@ app.listen(port, () => {
 
 
 app.post('/upload-video', async (req, res) => {
+    console.log('this is the requestbody' + req.body.name) // works
     try {
-        if (!req.files) {
+        if (!req.body.name) {
             res.send({
                 message: 'No file has been uploaded'
             })
         } else {
             // give unique filename later
-            let video = req.files.video
+            let video = req.body.files.blob
 
-            video.mv('./uploads/' + video.name)
+            video.mv('./uploadedfiles/' + video.name)
+            console.log('Uploaded video: ' + video.name)
 
             res.send({
                 message: 'File successfully uploaded'
