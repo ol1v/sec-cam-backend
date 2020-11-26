@@ -33,12 +33,10 @@ app.post('/upload-video', async (req, res) => {
             })
         } else {
             // give unique filename later
-            let video = req.files
+            let video = req.files.files // this is the blob
 
-            console.log('req.files reaches server')
-
-            // video.mv('./uploadedfiles/' + 'video')
-            // console.log('Uploaded video: ' + 'video')
+            video.mv('./uploadedfiles/' + 'video')
+            console.log('Uploaded video: ' + 'video')
 
             res.send({
                 message: 'File successfully uploaded'
