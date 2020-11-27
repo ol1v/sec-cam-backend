@@ -4,6 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const uuid = require('uuid')
 const fs = require('fs')
+const path = require('path')
 
 const app = express()
 
@@ -58,5 +59,19 @@ app.post('/upload-video', async (req, res) => {
 )
 
 app.get('/saved-videos', function (req, res) {
+
+    const directoryPath = path.join(__dirname, 'uploadedfiles')
+
+    fs.readdir(directoryPath, function (err, files) {
+        if(err) {
+            return console.log('Unable to read directory:' + err)
+        }
+        
+        files.forEach(function(file) {
+            console.log('file' + file)
+        })
+        res.status(200).send('Get request works')
+    })
+
 
 })
