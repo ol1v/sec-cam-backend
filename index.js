@@ -2,6 +2,8 @@ const express = require('express')
 const fileUpload = require('express-fileupload')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const uuid = require('uuid')
+const fs = require('fs')
 
 const app = express()
 
@@ -32,11 +34,18 @@ app.post('/upload-video', async (req, res) => {
                 message: 'No file has been uploaded'
             })
         } else {
-            // give unique filename later
+            // use token to add unique filename
+            let token = uuid.v4()
+
             let video = req.files.files // this is the blob
 
             video.mv('./uploadedfiles/' + 'video')
-            console.log('Uploaded video: ' + 'video')
+
+            fs.rename('./uploadedfiles/video', 'uploadedfiles/' + token, () => {
+                console.log('Changed filename')
+            })
+
+            // TODO: Save path to file in database
 
             res.send({
                 message: 'File successfully uploaded'
@@ -47,3 +56,7 @@ app.post('/upload-video', async (req, res) => {
     }
 }
 )
+
+app.get('/saved-videos', function (req, res) {
+
+})
