@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const uuid = require('uuid')
 const fs = require('fs')
 const path = require('path')
+const db = require('./mongodb')
 
 const app = express()
 
@@ -39,12 +40,23 @@ app.post('/upload-video', async (req, res) => {
             let token = uuid.v4()
 
             let video = req.files.files // this is the blob
-
+            console.log('typeof video:' + req.files.files.mimetype)
             video.mv('./uploadedfiles/' + 'video')
 
             fs.rename('./uploadedfiles/video', 'uploadedfiles/' + token, () => {
                 console.log('Changed filename')
             })
+
+            // var dbcollection = { // add description later
+            //     name: req.body.name,
+            //     path: `./uploadedfiles/${token}`
+            // }
+
+            // db.collection('videos').insertOne(dbcollection, function(err, res) {
+            //     if (err) throw err
+            //     console.log('saved videopath to database')
+            //     db.close()
+            // })
 
             // TODO: Save path to file in database
 
@@ -59,7 +71,7 @@ app.post('/upload-video', async (req, res) => {
 )
 
 app.get('/saved-videos', function (req, res) {
-
+    let arr = []
     const directoryPath = path.join(__dirname, 'uploadedfiles')
 
     fs.readdir(directoryPath, function (err, files) {
@@ -69,9 +81,35 @@ app.get('/saved-videos', function (req, res) {
         
         files.forEach(function(file) {
             console.log('file' + file)
+            // fs.readFile()
+            arr.push(file)
         })
-        res.status(200).send('Get request works')
+        res.status(200).send({message: 'Get request works',
+                            data: arr})
+    })
+})
+
+// Create post to specific file and send back thumbnail + file.name
+app.get ('/test', (req, res) => {
+    let readStream = fs.createReadStream(__dirname + '/uploadedfiles/4fd15965-5ef1-4d53-b7c7-f195cf63d2d0')
+
+    // When the stream is done being read, end the response
+    readStream.on('close', () => {
+        res.end()
     })
 
+    // Stream chunks to response
+    readStream.pipe(res)    
+});
 
-})
+// .get("/:file", (req, res) => {
+//     console.log(req.params.file)
+//     fs.readFile(path.resolve('/uploads', './'+req.params.file), function (err, data){
+//         if (!err) {
+//             console.log("d: ",data);
+//             res.send(data)
+//         } else {
+//            console.log(err);
+//         }
+//     });
+// });
