@@ -90,8 +90,10 @@ app.get('/saved-videos', function (req, res) {
 })
 
 // Create post to specific file and send back thumbnail + file.name
-app.get ('/test', (req, res) => {
-    let readStream = fs.createReadStream(__dirname + '/uploadedfiles/4fd15965-5ef1-4d53-b7c7-f195cf63d2d0')
+app.get ('/videos/:file', (req, res) => {
+    // let readStream = fs.createReadStream(__dirname + '/uploadedfiles/4fd15965-5ef1-4d53-b7c7-f195cf63d2d0')
+    console.log('params:: ' + req.params.file)
+    let readStream = fs.createReadStream(__dirname + `/uploadedfiles/${req.params.file}`)
 
     // When the stream is done being read, end the response
     readStream.on('close', () => {
@@ -101,15 +103,3 @@ app.get ('/test', (req, res) => {
     // Stream chunks to response
     readStream.pipe(res)    
 });
-
-// .get("/:file", (req, res) => {
-//     console.log(req.params.file)
-//     fs.readFile(path.resolve('/uploads', './'+req.params.file), function (err, data){
-//         if (!err) {
-//             console.log("d: ",data);
-//             res.send(data)
-//         } else {
-//            console.log(err);
-//         }
-//     });
-// });

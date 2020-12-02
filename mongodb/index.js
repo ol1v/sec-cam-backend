@@ -1,7 +1,8 @@
 var MongoClient = require('mongodb').MongoClient
 
 
-
+const username = ''
+const password = ''
 var url = `mongodb://${username}:${password}@den1.mongo1.gear.host:27001/secvideos`
 var database = null
 
